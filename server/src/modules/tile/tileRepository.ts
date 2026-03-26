@@ -22,7 +22,12 @@ class TileRepository {
   }
 
   async readByCoordinates(coordX: number, coordY: number) {
-    // your code here
+    const [rows] = await databaseClient.query<Rows>(
+      "select * from tile where coord_x = ? and coord_y = ?",
+      [coordX, coordY],
+    );
+
+    return rows;
   }
 
   async getRandomIsland() {
@@ -36,7 +41,7 @@ class TileRepository {
   async hideTreasure(island: Tile) {
     const [result] = await databaseClient.query<Result>(
       `update tile set has_treasure =
-        case
+        case 
           when id = ? then true
           else false
         end`,
