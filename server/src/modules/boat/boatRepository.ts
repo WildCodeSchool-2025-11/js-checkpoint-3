@@ -12,7 +12,10 @@ type Boat = {
 class BoatRepository {
   async readAll(where?: { name: string }) {
     const [rows] = await databaseClient.query<Rows>(
-      "SELECT boat.id, boat.name, boat.coord_x, boat.coord_y, tile.type, tile.has_treasure FROM boat JOIN tile ON boat.coord_x = tile.coord_x AND boat.coord_y = tile.coord_y ORDER BY boat.coord_y, boat.coord_x",
+      where?.name
+        ? "SELECT boat.id, boat.name, boat.coord_x, boat.coord_y, tile.type, tile.has_treasure FROM boat JOIN tile ON boat.coord_x = tile.coord_x AND boat.coord_y = tile.coord_y WHERE boat.name = ? ORDER BY boat.coord_y, boat.coord_x"
+        : "SELECT boat.id, boat.name, boat.coord_x, boat.coord_y, tile.type, tile.has_treasure FROM boat JOIN tile ON boat.coord_x = tile.coord_x AND boat.coord_y = tile.coord_y ORDER BY boat.coord_y, boat.coord_x",
+      where?.name ? [where.name] : [],
     );
     return rows as Boat[];
   }
