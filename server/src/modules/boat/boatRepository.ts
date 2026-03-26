@@ -11,12 +11,20 @@ type Boat = {
 
 class BoatRepository {
   async readAll(where?: { name: string }) {
-    const [rows] = await databaseClient.query<Rows>(
-      `SELECT boat.id, boat.name, boat.coord_x, boat.coord_y, tile.type, tile.has_treasure
-       FROM boat
-       JOIN tile ON boat.coord_x = tile.coord_x AND boat.coord_y = tile.coord_y
-       ORDER BY boat.coord_y, boat.coord_x`,
-    );
+    let query = `SELECT boat.id, boat.name, boat.coord_x, boat.coord_y, tile.type, tile.has_treasure
+     FROM boat
+     JOIN tile ON boat.coord_x = tile.coord_x AND boat.coord_y = tile.coord_y`;
+
+    const params: string[] = [];
+
+    if (where?.name) {
+      query += " WHERE boat.name LIKE ?";
+      params.push(`%${where.name}%`);
+    }
+
+    query += " ORDER BY boat.coord_y, boat.coord_x";
+
+    const [rows] = await databaseClient.query<Rows>(query, params);
     return rows as Boat[];
   }
 
