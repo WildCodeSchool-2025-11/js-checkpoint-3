@@ -7,6 +7,9 @@ const router = express.Router();
 /* ************************************************************************* */
 
 import boatActions from "./modules/boat/boatActions";
+import tileActions from "./modules/tile/tileActions";
+
+router.get("/api/tiles", tileActions.browse);
 
 router.get("/api/boats", boatActions.browse);
 
